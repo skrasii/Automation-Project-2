@@ -81,20 +81,19 @@ describe('Issue create', () => {
 
       //open issue type dropdown and choose Story
       cy.get('[data-testid="select:type"]').click();
-      cy.get('[data-testid="select-option:Bug"]')
+      cy.get(`[data-testid="select-option:${issueData.type}"]`)
         .trigger('click');
 
       //Select Pickle Rick from reporter dropdown
       cy.get('[data-testid="select:reporterId"]').click();
-      cy.get('[data-testid="select-option:Pickle Rick"]').click();
+      cy.get(`[data-testid="select-option:${issueData.reporter}"]`).click();
 
       //Select Baby Yoda from assignee dropdown
       cy.get('[data-testid="select:userIds"]').click();
-      cy.get('[data-testid="select-option:Baby Yoda"]').click();
+      cy.get(`[data-testid="select-option:${issueData.assignee}"]`).click();
 
       cy.get('[data-testid="select:priority"]').click()
-      cy.get('[data-testid="select-option:Highest"]').click()
-      
+      cy.get(`[data-testid="select-option:${issueData.priority}"]`).click()
 
       // Click on button "Create issue"
       cy.get('button[type="submit"]').click();
@@ -118,7 +117,7 @@ describe('Issue create', () => {
         .find('p')
         .contains(issueData.title);
       //Assert that correct avatar and type icon are visible
-      cy.get('[data-testid="avatar:Pickle Rick"]').should('be.visible');
+      cy.get(`[data-testid="avatar:${issueData.reporter}"]`).should('be.visible');
       cy.get('[data-testid="icon:bug"]').should('be.visible');
     });
   });
