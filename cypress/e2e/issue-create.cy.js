@@ -30,6 +30,7 @@ describe('Issue create', () => {
 
       //Click on button "Create issue"
       cy.get('button[type="submit"]').click();
+      
     });
 
     //Assert that modal window is closed and successful message is visible
