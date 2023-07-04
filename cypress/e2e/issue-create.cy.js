@@ -58,6 +58,7 @@ describe('Issue create', () => {
     });
   });
 
+  // Assignment 2. Test 1
   it('Should create an issue with priority and validate it successfully', () => {
 
     const issueData = {
@@ -124,7 +125,8 @@ describe('Issue create', () => {
     });
   });
 
-  it.only('Should create an issue with random data and validate it successfully', () => {
+  // Assignment 2. Test 2
+  it('Should create an issue with random data and validate it successfully', () => {
 
     const issueData = {
       title: faker.lorem.sentence(1),
