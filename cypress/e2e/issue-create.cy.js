@@ -32,7 +32,7 @@ describe('Issue create', () => {
 
       //Click on button "Create issue"
       cy.get('button[type="submit"]').click();
-      
+
     });
 
     //Assert that modal window is closed and successful message is visible
@@ -68,7 +68,7 @@ describe('Issue create', () => {
       assignee: "Lord Gaben",
       reporter: "Pickle Rick",
       priority: "Highest"
-    }; 
+    };
 
     //System finds modal for creating issue and does next steps inside of it
     cy.get('[data-testid="modal:issue-create"]').within(() => {
@@ -135,7 +135,7 @@ describe('Issue create', () => {
       assignee: "Baby Yoda",
       reporter: "Baby Yoda",
       priority: "Low"
-    }; 
+    };
 
     //System finds modal for creating issue and does next steps inside of it
     cy.get('[data-testid="modal:issue-create"]').within(() => {
@@ -151,7 +151,7 @@ describe('Issue create', () => {
 
       // assert issue type 'task' selected
       cy.get('[data-testid="icon:task"]').should('be.visible')
-  
+
       //Select user from reporter dropdown
       cy.get('[data-testid="select:reporterId"]').click();
       cy.get(`[data-testid="select-option:${issueData.reporter}"]`).click();
