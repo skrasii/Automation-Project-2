@@ -150,7 +150,7 @@ describe('Issue create', () => {
       cy.get('input[name="title"]').type(issueData.title);
 
       // assert issue type 'task' selected
-      cy.get('[data-testid="icon:task"]').should('be.visible')
+      cy.get('[data-testid="select:type"]').contains(issueData.type)
 
       //Select user from reporter dropdown
       cy.get('[data-testid="select:reporterId"]').click();
