@@ -65,7 +65,7 @@ describe('Issue create', () => {
             cy.get('@issueModal').within(() => {
                 cy.get('[data-testid="icon:close"]').first().click();
             })
-            // assert target issue is bit deleted and visible on the jira board
+            // assert target issue is not deleted and visible on the jira board
             cy.get('[data-testid="board-list:backlog"]').children().should('contain', issueTitle);
 
         });
