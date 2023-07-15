@@ -7,8 +7,8 @@ describe('Issue delete', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.url().should('eq', `${Cypress.env('baseUrl')}project/board`).then((url) => {
-    //open issue detail modal with title from line 16  
-    cy.contains(issueTitle).click();
+      //open issue detail modal with title from line 16  
+      cy.contains(issueTitle).click();
     });
   });
 
@@ -16,11 +16,45 @@ describe('Issue delete', () => {
   const issueTitle = 'This is an issue of type: Task.';
 
   it('Should delete issue successfully', () => {
-    //add steps to delete issue
-    // Test
+
+    //Getting issue details modal and working with it.
+    IssueModal.getIssueDetailModal().as('issueModal').should('be.visible');
+    cy.get('@issueModal').within(() => {
+
+      cy.get('@issueModal').find('textarea').first().invoke('text').then((title) => {
+        cy.log(`Deleting issue: "${title}"`)
+      })
+      
+      cy.get(IssueModal.deleteButton).click()
+
+    }).then(() => {
+
+      // only then working with confimation modal and board list, preventing async execusion 
+      IssueModal.confirmDeletion()
+      IssueModal.ensureIssueIsNotVisibleOnBoard(issueTitle)
+
+    });
+
   });
 
-  it('Should cancel deletion process successfully', () => {
-    //add steps to start deletion proces but cancel it
+  it.only('Should cancel deletion process successfully', () => {
+    //Getting issue details modal and working with it.
+    IssueModal.getIssueDetailModal().as('issueModal').should('be.visible');
+    cy.get('@issueModal').within(() => {
+
+      cy.get('@issueModal').find('textarea').first().invoke('text').then((title) => {
+        cy.log(`Deleting issue: "${title}"`)
+      })
+
+      cy.get(IssueModal.deleteButton).click()
+
+    }).then(() => {
+
+      // only then working with confimation modal and board list, preventing async execusion 
+      IssueModal.cancelDeletion()
+      IssueModal.closeDetailModal()
+      IssueModal.ensureIssueIsVisibleOnBoard(issueTitle)
+
+    });
   });
 });
