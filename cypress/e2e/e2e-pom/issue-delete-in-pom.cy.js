@@ -17,6 +17,7 @@ describe('Issue delete', () => {
 
   it('Should delete issue successfully', () => {
     //add steps to delete issue
+    // Test
   });
 
   it('Should cancel deletion process successfully', () => {
