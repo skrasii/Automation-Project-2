@@ -21,10 +21,7 @@ describe('Issue delete', () => {
     IssueModal.getIssueDetailModal().as('issueModal').should('be.visible');
     cy.get('@issueModal').within(() => {
 
-      cy.get('@issueModal').find('textarea').first().invoke('text').then((title) => {
-        cy.log(`Deleting issue: "${title}"`)
-      })
-
+      cy.log(`Deleting issue: "${issueTitle}"`)
       cy.get(IssueModal.deleteButton).click()
 
     }).then(() => {
@@ -38,14 +35,12 @@ describe('Issue delete', () => {
   });
 
   it('Should cancel deletion process successfully', () => {
+
     //Getting issue details modal and working with it.
     IssueModal.getIssueDetailModal().as('issueModal').should('be.visible');
     cy.get('@issueModal').within(() => {
 
-      cy.get('@issueModal').find('textarea').first().invoke('text').then((title) => {
-        cy.log(`Deleting issue: "${title}"`)
-      })
-
+      cy.log(`Deleting issue: "${issueTitle}"`)
       cy.get(IssueModal.deleteButton).click()
 
     }).then(() => {
