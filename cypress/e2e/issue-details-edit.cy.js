@@ -1,65 +1,122 @@
 describe('Issue details editing', () => {
-  beforeEach(() => {
-    cy.visit('/');
-    cy.url().should('eq', `${Cypress.env('baseUrl')}project`).then((url) => {
-      cy.visit(url + '/board');
-      cy.contains('This is an issue of type: Task.').click();
-    });
-  });
+	beforeEach(() => {
+		cy.visit('/');
+		cy.url()
+			.should('eq', `${Cypress.env('baseUrl')}project`)
+			.then((url) => {
+				cy.visit(url + '/board');
+				cy.contains('This is an issue of type: Task.').click();
+			});
+	});
 
-  it('Should update type, status, assignees, reporter, priority successfully', () => {
-    getIssueDetailsModal().within(() => {
-      cy.get('[data-testid="select:type"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Story"]')
-          .trigger('mouseover')
-          .trigger('click');
-      cy.get('[data-testid="select:type"]').should('contain', 'Story');
+	it('Should update type, status, assignees, reporter, priority successfully', () => {
+		getIssueDetailsModal().within(() => {
+			cy.get('[data-testid="select:type"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Story"]')
+				.trigger('mouseover')
+				.trigger('click');
+			cy.get('[data-testid="select:type"]').should('contain', 'Story');
 
-      cy.get('[data-testid="select:status"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Done"]').click();
-      cy.get('[data-testid="select:status"]').should('have.text', 'Done');
+			cy.get('[data-testid="select:status"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Done"]').click();
+			cy.get('[data-testid="select:status"]').should('have.text', 'Done');
 
-      cy.get('[data-testid="select:assignees"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Lord Gaben"]').click();
-      cy.get('[data-testid="select:assignees"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Baby Yoda"]').click();
-      cy.get('[data-testid="select:assignees"]').should('contain', 'Baby Yoda');
-      cy.get('[data-testid="select:assignees"]').should('contain', 'Lord Gaben');
+			cy.get('[data-testid="select:assignees"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Lord Gaben"]').click();
+			cy.get('[data-testid="select:assignees"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Baby Yoda"]').click();
+			cy.get('[data-testid="select:assignees"]').should(
+				'contain',
+				'Baby Yoda'
+			);
+			cy.get('[data-testid="select:assignees"]').should(
+				'contain',
+				'Lord Gaben'
+			);
 
-      cy.get('[data-testid="select:reporter"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Pickle Rick"]').click();
-      cy.get('[data-testid="select:reporter"]').should('have.text', 'Pickle Rick');
+			cy.get('[data-testid="select:reporter"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Pickle Rick"]').click();
+			cy.get('[data-testid="select:reporter"]').should(
+				'have.text',
+				'Pickle Rick'
+			);
 
-      cy.get('[data-testid="select:priority"]').click('bottomRight');
-      cy.get('[data-testid="select-option:Medium"]').click();
-      cy.get('[data-testid="select:priority"]').should('have.text', 'Medium');
-    });
-  });
+			cy.get('[data-testid="select:priority"]').click('bottomRight');
+			cy.get('[data-testid="select-option:Medium"]').click();
+			cy.get('[data-testid="select:priority"]').should(
+				'have.text',
+				'Medium'
+			);
+		});
+	});
 
-  it('Should update title, description successfully', () => {
-    const title = 'TEST_TITLE';
-    const description = 'TEST_DESCRIPTION';
+	it('Should update title, description successfully', () => {
+		const title = 'TEST_TITLE';
+		const description = 'TEST_DESCRIPTION';
 
-    getIssueDetailsModal().within(() => {
-      cy.get('textarea[placeholder="Short summary"]')
-        .clear()
-        .type(title)
-        .blur();
+		getIssueDetailsModal().within(() => {
+			cy.get('textarea[placeholder="Short summary"]')
+				.clear()
+				.type(title)
+				.blur();
 
-      cy.get('.ql-snow')
-        .click()
-        .should('not.exist');
+			cy.get('.ql-snow').click().should('not.exist');
 
-      cy.get('.ql-editor').clear().type(description);
+			cy.get('.ql-editor').clear().type(description);
 
-      cy.contains('button', 'Save')
-        .click()
-        .should('not.exist');
+			cy.contains('button', 'Save').click().should('not.exist');
 
-      cy.get('textarea[placeholder="Short summary"]').should('have.text', title);
-      cy.get('.ql-snow').should('have.text', description);
-    });
-  });
+			cy.get('textarea[placeholder="Short summary"]').should('have.text', title);
+			cy.get('.ql-snow').should('have.text', description);
+		});
+	});
 
-  const getIssueDetailsModal = () => cy.get('[data-testid="modal:issue-details"]');
+  // Assignment 3: Task 1 (BONUS)
+	it('Check "Priority" dropdown functionality', () => {
+		const expectedLength = 5;
+		let priorityList = [];
+
+		const prioritySelector = '[data-testid="select:priority"]';
+
+		getIssueDetailsModal().within(() => {
+      // getting selected priority option, since it is not in the main list
+			cy.get(prioritySelector).children().find('i').next()
+				.invoke('text').then((priorityText) => {
+					priorityList.push(priorityText);
+				});
+
+      // looking for all available priority options
+			cy.get(prioritySelector).click().next()
+				.find('[data-testid*="select-option:"]')
+				.each((option) => {
+					cy.wrap(option).find('i').next().invoke('text')
+						.then((priorityText) => {
+							priorityList.push(priorityText);
+							cy.log('Priority option found: ' + priorityText);
+							cy.log('Array length: ' + priorityList.length);
+						});
+				})
+				.then(() => {
+					cy.wrap(priorityList).should('have.lengthOf', expectedLength);
+				});
+		});
+	});
+
+  // Assignment 3: Task 2 (BONUS)
+	it.only('Check reporter name has only characters in it', () => {
+		const pattern = /^[A-Za-z\s]*$/;
+
+
+		getIssueDetailsModal().within(() => {
+			cy.get('[data-testid="select:reporter"]')
+				.find('[data-testid*="avatar:"]')
+				.next()
+				.invoke('text').should('match', pattern)
+		});
+	});
+
+
+
+	const getIssueDetailsModal = () =>
+		cy.get('[data-testid="modal:issue-details"]');
 });
