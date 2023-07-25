@@ -3,7 +3,7 @@ import IssueModal from '../pages/IssueModal';
 const timeWidget = '[data-testid="icon:stopwatch"]';
 const modalTracking = '[data-testid="modal:tracking"]';
 
-describe('Issue comments creating, editing and deleting', () => {
+describe('Time tracking "estimated time" and "remaining time" adding, editing and removing', () => {
 	beforeEach(() => {
 		cy.visit('/');
 		cy.url().should('eq', `${Cypress.env('baseUrl')}project/board`)
