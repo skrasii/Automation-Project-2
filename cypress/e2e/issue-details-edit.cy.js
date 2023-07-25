@@ -103,9 +103,8 @@ describe('Issue details editing', () => {
 	});
 
   // Assignment 3: Task 2 (BONUS)
-	it.only('Check reporter name has only characters in it', () => {
+	it('Check reporter name has only characters in it', () => {
 		const pattern = /^[A-Za-z\s]*$/;
-
 
 		getIssueDetailsModal().within(() => {
 			cy.get('[data-testid="select:reporter"]')
@@ -114,8 +113,6 @@ describe('Issue details editing', () => {
 				.invoke('text').should('match', pattern)
 		});
 	});
-
-
 
 	const getIssueDetailsModal = () =>
 		cy.get('[data-testid="modal:issue-details"]');
