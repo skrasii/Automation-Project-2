@@ -1,12 +1,12 @@
 import IssueModal from '../pages/IssueModal';
 
 const timeWidget = '[data-testid="icon:stopwatch"]';
+const modalTracking = '[data-testid="modal:tracking"]';
 
 describe('Issue comments creating, editing and deleting', () => {
 	beforeEach(() => {
 		cy.visit('/');
-		cy.url()
-			.should('eq', `${Cypress.env('baseUrl')}project/board`)
+		cy.url().should('eq', `${Cypress.env('baseUrl')}project/board`)
 			.then((url) => {
 				cy.visit(url + '/board');
 				// opening first available task
@@ -17,34 +17,82 @@ describe('Issue comments creating, editing and deleting', () => {
 	const getIssueDetailsModal = () =>
 		cy.get('[data-testid="modal:issue-details"]');
 
-	it('Should check estimation for add/edit and delete functionality', () => {
+	it('Check "estimate" for add/edit and delete functionality', () => {
 		let estimatedTime = 16;
 
 		getIssueDetailsModal().within(() => {
-			const estimationInput = cy.contains('Original Estimate').next()
-				.children('input[placeholder="Number"]');
+			// add estimated time. assert is added and visible
+			inputCheckEstimated(estimatedTime);
 
-			// add estimation. assert, that estimation is added and visible
-			inputAndCheckEstimation(estimatedTime);
-
-			// edit estimation. assert that updated value is visible
+			// edit estimated time. assert is updated and visible
 			estimatedTime++;
-			inputAndCheckEstimation(estimatedTime);
+			inputCheckEstimated(estimatedTime);
 
-			// remove estimation. assert removed
-			estimationInput.clear();
-			estimationInput.should('not.have.value');
-			cy.get(timeWidget).next().should('not.contain', 'estimated');
+			// remove estimated time. assert removed
+			inputCheckEstimated();
 		});
+	});
+
+	it('Check "remaining time" for add/edit and delete functionality', () => {
+		let timeRemaining = 7;
+
+		getIssueDetailsModal().should('be.visible');
+
+		// add time remaining. assert it is added and visible
+		inputCheckTimeRemaining(timeRemaining);
+
+		// edit time remaining. assert it is updated and visible
+		timeRemaining++;
+		inputCheckTimeRemaining(timeRemaining);
+
+		// remove time remaining value. assert it is removed
+		openTimeModal();
+		cy.get(modalTracking).within(() => {
+			cy.get('input[placeholder="Number"]').eq(1).click().clear();
+		});
+		closeTimeModal();
 	});
 });
 
-function inputAndCheckEstimation(hours) {
-	const estimationInput = cy.contains('Original Estimate').next()
+function inputCheckEstimated(hours = null) {
+	const estimatedInput = cy
+		.contains('Original Estimate')
+		.next()
 		.children('input[placeholder="Number"]');
 
-	estimationInput.clear().type(hours);
-	estimationInput.should('have.value', hours);
-	cy.get(timeWidget).next()
-		.contains(hours + 'h estimated');
+	estimatedInput.clear();
+
+	if (hours > 0) {
+		estimatedInput.type(hours);
+		estimatedInput.should('have.value', hours);
+		cy.get(timeWidget)
+			.next()
+			.contains(hours + 'h estimated');
+	} else {
+		estimatedInput.should('not.have.value');
+		cy.get(timeWidget).next().should('not.contain', 'estimated');
+	}
+}
+
+function inputCheckTimeRemaining(hours) {
+	openTimeModal();
+	cy.get(modalTracking).within(() => {
+		cy.get('input[placeholder="Number"]').eq(1).click().clear().type(hours);
+	});
+	closeTimeModal();
+	cy.get(timeWidget)
+		.next()
+		.contains(hours + 'h remaining');
+}
+
+function openTimeModal() {
+	cy.get(timeWidget).click();
+	cy.get(modalTracking).should('be.visible');
+}
+
+function closeTimeModal() {
+	cy.get(modalTracking).within(() => {
+		cy.contains('button', 'Done').click();
+	});
+	cy.get(modalTracking).should('not.exist');
 }
