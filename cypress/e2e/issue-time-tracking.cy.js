@@ -21,7 +21,7 @@ describe('Issue comments creating, editing and deleting', () => {
 		let estimatedTime = 16;
 
 		getIssueDetailsModal().within(() => {
-			const estimation = cy.contains('Original Estimate').next()
+			const estimationInput = cy.contains('Original Estimate').next()
 				.children('input[placeholder="Number"]');
 
 			// add estimation. assert, that estimation is added and visible
@@ -32,19 +32,19 @@ describe('Issue comments creating, editing and deleting', () => {
 			inputAndCheckEstimation(estimatedTime);
 
 			// remove estimation. assert removed
-			estimation.clear();
-			estimation.should('not.have.value');
+			estimationInput.clear();
+			estimationInput.should('not.have.value');
 			cy.get(timeWidget).next().should('not.contain', 'estimated');
 		});
 	});
 });
 
 function inputAndCheckEstimation(hours) {
-	const estimation = cy.contains('Original Estimate').next()
+	const estimationInput = cy.contains('Original Estimate').next()
 		.children('input[placeholder="Number"]');
 
-	estimation.clear().type(hours);
-	estimation.should('have.value', hours);
+	estimationInput.clear().type(hours);
+	estimationInput.should('have.value', hours);
 	cy.get(timeWidget).next()
 		.contains(hours + 'h estimated');
 }
