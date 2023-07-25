@@ -80,6 +80,8 @@ function inputCheckTimeRemaining(hours) {
 		cy.get('input[placeholder="Number"]').eq(1).click().clear().type(hours);
 	});
 	closeTimeModal();
+
+    // assert time was updated
 	cy.get(timeWidget)
 		.next()
 		.contains(hours + 'h remaining');
