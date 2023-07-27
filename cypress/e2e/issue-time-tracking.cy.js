@@ -97,7 +97,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		});
 		closeTimeModal();
 
-		timeWidget().should('contains', 'No time logged');
+		timeWidget().should('contain', 'No time logged');
 		timeWidget().should('not.contain', `h logged`);
 		timeWidget().should('not.contain', `h remaining`);
 	});
