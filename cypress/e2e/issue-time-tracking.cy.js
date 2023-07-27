@@ -21,7 +21,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		});
 	});
 
-	it('Check there are no esitamed hours and no time logged by default in newly created task', () => {
+	it('Check there are no estimated hours and no time logged by default in newly created task', () => {
 		createIssue(issueTitle, baseUrl);
 		openIssue(null, issueTitle);
 
