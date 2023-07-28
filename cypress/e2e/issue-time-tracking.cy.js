@@ -89,7 +89,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		timeWidget().should('contain', `${timeRemaining}h remaining`);
 	});
 
-	it('Check "time spent"/"time remaining" can be cleared', () => {
+	it('Check "time spent"/"time remaining" can be cleared and saved', () => {
 		openIssue(issueNumber);
 
 		openTimeModal();
