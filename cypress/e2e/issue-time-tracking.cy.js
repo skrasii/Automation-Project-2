@@ -35,8 +35,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			inputCheckEstimated(hours);
 		});
 
-		closeIssue();
-		openIssue('', issueTitle);
+		reOpenIssue('', issueTitle);
 		timeWidget().should('contain', `${hours}h estimated`);
 
 	});
@@ -50,8 +49,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			inputCheckEstimated(hours);
 		});
 
-		closeIssue();
-		openIssue(issueNumber);
+		reOpenIssue(issueNumber);
 		timeWidget().should('contain', `${hours}h estimated`);
 	});
 
@@ -64,8 +62,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			timeWidget().should('not.contain', `estimated`);
 		});
 
-		closeIssue();
-		openIssue(issueNumber);
+		reOpenIssue(issueNumber);
 		timeWidget().should('not.contain', `estimated`);
 	});
 
@@ -84,6 +81,12 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		timeWidget().should('not.contain', 'No time logged');
 		timeWidget().should('contain', `${timeSpent}h logged`);
 		timeWidget().should('contain', `${timeRemaining}h remaining`);
+
+		reOpenIssue(issueNumber);
+
+		// assert same after re-open
+		timeWidget().should('contain', `${timeSpent}h logged`);
+		timeWidget().should('contain', `${timeRemaining}h remaining`);
 	});
 
 	it('Check "time spent"/"time remaining" can be cleared', () => {
@@ -99,10 +102,23 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		timeWidget().should('contain', 'No time logged');
 		timeWidget().should('not.contain', `h logged`);
 		timeWidget().should('not.contain', `h remaining`);
+
+		reOpenIssue(issueNumber);
+
+		// assert same after re-open
+		timeWidget().should('contain', 'No time logged');
+		timeWidget().should('not.contain', `h logged`);
+		timeWidget().should('not.contain', `h remaining`);
 	});
 
 
 });
+
+function reOpenIssue(number = null, title = '') {
+		cy.log('🔄 Reopening task')
+		closeIssue();
+		openIssue(number, title);
+}
 
 function inputCheckEstimated(hours = null) {
 	estimatedInputField().clear();
