@@ -160,7 +160,7 @@ function createIssue(title) {
 		})
 		.then(() => {
 			cy.get('[type="success"]')
-				.contains('Issue has been successfully created.')
+				.should('contain', 'Issue has been successfully created.')
 				.click();
 		});
 
