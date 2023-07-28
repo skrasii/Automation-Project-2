@@ -2,7 +2,7 @@ import IssueModal from '../pages/IssueModal';
 
 const baseUrl = `${Cypress.env('baseUrl')}project/board`;
 
-const issueNumber = 1;
+const issueNumber = 0;
 const modalTracking = '[data-testid="modal:tracking"]';
 const issueTitle = "Krasii's test task";
 const issueModal = '[data-testid="modal:issue-details"]';
@@ -21,48 +21,47 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		});
 	});
 
-	it('Check there are no estimated hours and no time logged by default in newly created task', () => {
-		createIssue(issueTitle, baseUrl);
-		openIssue(null, issueTitle);
+	it('Check "estimate" time can be added and visible', () => {
+		const hours = 10
+
+		cy.visit(baseUrl + '/board?modal-issue-create=true');
+		createIssue(issueTitle);
+		openIssue('', issueTitle);
 
 		getIssueDetailsModal().within(() => {
 			estimatedInputField().should('not.have.value');
 			timeWidget().should('contain', 'No time logged');
-		});
-	});
-
-	it('Check "estimate" time can be added and visible', () => {
-		openIssue(issueNumber);
-
-		getIssueDetailsModal().within(() => {
-			// add estimated time. assert it is added and visible
-			inputCheckEstimated(10);
+			// add original estimate time. assert it is added and visible
+			inputCheckEstimated(hours);
 		});
 
 		closeIssue();
-		openIssue(issueNumber);
-		timeWidget().should('contain', `${10}h estimated`);
+		openIssue('', issueTitle);
+		timeWidget().should('contain', `${hours}h estimated`);
+
 	});
 
 	it('Check "estimate" time can be edited and visible', () => {
-		openIssue(issueNumber);
+		const hours = 20
 
+		openIssue(issueNumber);
 		getIssueDetailsModal().within(() => {
-			// edit estimated time. assert it is updated and visible
-			inputCheckEstimated(20);
+			// edit original estimate time. assert it is updated and visible
+			inputCheckEstimated(hours);
 		});
 
 		closeIssue();
 		openIssue(issueNumber);
-		timeWidget().should('contain', `${20}h estimated`);
+		timeWidget().should('contain', `${hours}h estimated`);
 	});
 
 	it('Check "estimate" time can be removed', () => {
 		openIssue(issueNumber);
 
 		getIssueDetailsModal().within(() => {
-			// remove estimated time. assert it is updated and visible
+			// remove original estimate time
 			inputCheckEstimated(null);
+			timeWidget().should('not.contain', `estimated`);
 		});
 
 		closeIssue();
@@ -77,8 +76,8 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		openIssue(issueNumber);
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).click().clear().type(timeSpent);
-			cy.get('input[placeholder="Number"]').eq(1).click().clear().type(timeRemaining);
+			cy.get('input[placeholder="Number"]').eq(0).clear().type(timeSpent);
+			cy.get('input[placeholder="Number"]').eq(1).clear().type(timeRemaining);
 		});
 		closeTimeModal();
 
@@ -92,8 +91,8 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).click().clear();
-			cy.get('input[placeholder="Number"]').eq(1).click().clear();
+			cy.get('input[placeholder="Number"]').eq(0).clear();
+			cy.get('input[placeholder="Number"]').eq(1).clear();
 		});
 		closeTimeModal();
 
@@ -109,11 +108,12 @@ function inputCheckEstimated(hours = null) {
 	estimatedInputField().clear();
 
 	if (hours > 0) {
-		estimatedInputField().type(hours).trigger('{enter}').blur();
+		estimatedInputField().click().type(hours).blur();
 		estimatedInputField().should('have.value', hours);
 		timeWidget().should('contain', `${hours}h estimated`);
 	} else {
 		estimatedInputField().should('not.have.value');
+		estimatedInputField().should('have.attr', 'placeholder', 'Number');
 		timeWidget().should('not.contain', 'estimated');
 	}
 }
@@ -130,14 +130,15 @@ function closeTimeModal() {
 	cy.get(modalTracking).should('not.exist');
 }
 
-function createIssue(title, url) {
-	cy.visit(url + '/board?modal-issue-create=true');
+function createIssue(title) {
 
+	IssueModal.getIssueModal().should('be.visible');
+	
 	IssueModal.getIssueModal()
 		.within(() => {
 			// fix for title field being unfocused during form load.
-			cy.wait(500);
-			IssueModal.editTitle(title);
+			cy.get('[data-testid*="avatar:"]').should('be.visible');
+			cy.get('input[name="title"]').type(title);
 			cy.get(IssueModal.submitButton).click();
 		})
 		.then(() => {
@@ -145,12 +146,13 @@ function createIssue(title, url) {
 				.contains('Issue has been successfully created.')
 				.click();
 		});
+
 }
 
 function openIssue(number = null, title = '') {
 	if (title.length > 0) {
 		cy.get(IssueModal.backlogList).contains(title).click();
-	} else if (number !== null) {
+	} else if (number >= 0) {
 		cy.get(IssueModal.backlogList).children().eq(number).click();
 	} else {
 		cy.get(IssueModal.backlogList).children().eq(0).click();
