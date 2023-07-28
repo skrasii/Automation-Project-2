@@ -11,7 +11,8 @@ const closeIcon = '[data-testid="icon:close"]';
 const estimatedInputField = () => cy.contains('Original Estimate').next().children('input[placeholder="Number"]');
 const getIssueDetailsModal = () => cy.get(issueModal);
 const timeWidget = () => cy.get('[data-testid="icon:stopwatch"]').next();
-
+const timeSpentField = () => cy.get('input[placeholder="Number"]').eq(0);
+const timeRemainField = () => cy.get('input[placeholder="Number"]').eq(1);
 
 describe('Time tracking "estimated time" and "remaining time" adding, editing and removing', () => {
 	beforeEach(() => {
@@ -73,8 +74,8 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		openIssue(issueNumber);
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).clear().type(timeSpent);
-			cy.get('input[placeholder="Number"]').eq(1).clear().type(timeRemaining);
+			timeSpentField().clear().type(timeSpent);
+			timeRemainField().clear().type(timeRemaining);
 		});
 		closeTimeModal();
 
@@ -94,8 +95,8 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).clear();
-			cy.get('input[placeholder="Number"]').eq(1).clear();
+			timeSpentField().clear();
+			timeRemainField().clear();
 		});
 		closeTimeModal();
 
