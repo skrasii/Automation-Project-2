@@ -79,7 +79,7 @@ describe('Issue details editing', () => {
 		const prioritySelector = '[data-testid="select:priority"]';
 
 		getIssueDetailsModal().within(() => {
-      		// getting selected priority option, since it is not in the main list
+      		// getting pre-selected priority option, since it is not in the main list
 			cy.get(prioritySelector).children().find('i').next()
 				.invoke('text').then((priorityText) => {
 					priorityList.push(priorityText);
