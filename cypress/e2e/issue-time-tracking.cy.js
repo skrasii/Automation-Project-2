@@ -11,7 +11,8 @@ const closeIcon = '[data-testid="icon:close"]';
 const estimatedInputField = () => cy.contains('Original Estimate').next().children('input[placeholder="Number"]');
 const getIssueDetailsModal = () => cy.get(issueModal);
 const timeWidget = () => cy.get('[data-testid="icon:stopwatch"]').next();
-
+const timeSpentField = () => cy.get('input[placeholder="Number"]').eq(0);
+const timeRemainField = () => cy.get('input[placeholder="Number"]').eq(1);
 
 describe('Time tracking "estimated time" and "remaining time" adding, editing and removing', () => {
 	beforeEach(() => {
@@ -35,8 +36,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			inputCheckEstimated(hours);
 		});
 
-		closeIssue();
-		openIssue('', issueTitle);
+		reOpenIssue('', issueTitle);
 		timeWidget().should('contain', `${hours}h estimated`);
 
 	});
@@ -50,8 +50,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			inputCheckEstimated(hours);
 		});
 
-		closeIssue();
-		openIssue(issueNumber);
+		reOpenIssue(issueNumber);
 		timeWidget().should('contain', `${hours}h estimated`);
 	});
 
@@ -64,8 +63,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 			timeWidget().should('not.contain', `estimated`);
 		});
 
-		closeIssue();
-		openIssue(issueNumber);
+		reOpenIssue(issueNumber);
 		timeWidget().should('not.contain', `estimated`);
 	});
 
@@ -76,26 +74,39 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		openIssue(issueNumber);
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).clear().type(timeSpent);
-			cy.get('input[placeholder="Number"]').eq(1).clear().type(timeRemaining);
+			timeSpentField().clear().type(timeSpent);
+			timeRemainField().clear().type(timeRemaining);
 		});
 		closeTimeModal();
 
 		timeWidget().should('not.contain', 'No time logged');
 		timeWidget().should('contain', `${timeSpent}h logged`);
 		timeWidget().should('contain', `${timeRemaining}h remaining`);
+
+		reOpenIssue(issueNumber);
+
+		// assert same after re-open
+		timeWidget().should('contain', `${timeSpent}h logged`);
+		timeWidget().should('contain', `${timeRemaining}h remaining`);
 	});
 
-	it('Check "time spent"/"time remaining" can be cleared', () => {
+	it('Check "time spent"/"time remaining" can be cleared and saved', () => {
 		openIssue(issueNumber);
 
 		openTimeModal();
 		cy.get(modalTracking).within(() => {
-			cy.get('input[placeholder="Number"]').eq(0).clear();
-			cy.get('input[placeholder="Number"]').eq(1).clear();
+			timeSpentField().clear();
+			timeRemainField().clear();
 		});
 		closeTimeModal();
 
+		timeWidget().should('contain', 'No time logged');
+		timeWidget().should('not.contain', `h logged`);
+		timeWidget().should('not.contain', `h remaining`);
+
+		reOpenIssue(issueNumber);
+
+		// assert same after re-open
 		timeWidget().should('contain', 'No time logged');
 		timeWidget().should('not.contain', `h logged`);
 		timeWidget().should('not.contain', `h remaining`);
@@ -103,6 +114,12 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 
 
 });
+
+function reOpenIssue(number = null, title = '') {
+		cy.log('🔄 Reopening task')
+		closeIssue();
+		openIssue(number, title);
+}
 
 function inputCheckEstimated(hours = null) {
 	estimatedInputField().clear();
@@ -143,7 +160,7 @@ function createIssue(title) {
 		})
 		.then(() => {
 			cy.get('[type="success"]')
-				.contains('Issue has been successfully created.')
+				.should('contain', 'Issue has been successfully created.')
 				.click();
 		});
 
