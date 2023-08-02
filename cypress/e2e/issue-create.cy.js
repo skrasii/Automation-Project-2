@@ -231,8 +231,8 @@ describe('Issue create', () => {
 		});
 	});
 
-	// Assignment 3: Task 3 (BONUS)
-  // P.S Looks like it will fail, since app doesn't trim title 
+    // Assignment 3: Task 3 (BONUS)
+    // P.S Looks like it will fail, since app doesn't trim the title properly 
 	it.only('Verifies that application is removing unnecessary spaces on the board view', () => {
 		let issueTitle = ' My task  title ';
 
@@ -244,17 +244,11 @@ describe('Issue create', () => {
 				cy.get(IssueModal.submitButton).click();
 			})
 			.then(() => {
-				cy.get('[type="success"]').contains(
-					'Issue has been successfully created.'
-				);
+				cy.get('[type="success"]').contains('Issue has been successfully created.');
 				cy.reload();
 				// getting task title from newly created task
-				cy.get(IssueModal.backlogList)
-					.children()
-					.first()
-					.find('p')
-					.invoke('text')
-					.then((realTitle) => {
+				cy.get(IssueModal.backlogList).children().first()
+					.find('p').invoke('text').then((realTitle) => {
 						issueTitle = issueTitle.trim();
 						cy.wrap(realTitle).should('eq', issueTitle);
 					});

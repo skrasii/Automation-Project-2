@@ -71,7 +71,7 @@ describe('Issue details editing', () => {
 		});
 	});
 
-  // Assignment 3: Task 1 (BONUS)
+    // Assignment 3: Task 1 (BONUS)
 	it('Check "Priority" dropdown functionality', () => {
 		const expectedLength = 5;
 		let priorityList = [];
@@ -79,13 +79,13 @@ describe('Issue details editing', () => {
 		const prioritySelector = '[data-testid="select:priority"]';
 
 		getIssueDetailsModal().within(() => {
-      // getting selected priority option, since it is not in the main list
+      		// getting selected priority option, since it is not in the main list
 			cy.get(prioritySelector).children().find('i').next()
 				.invoke('text').then((priorityText) => {
 					priorityList.push(priorityText);
 				});
 
-      // looking for all available priority options
+      		// looking for all available priority options
 			cy.get(prioritySelector).click().next()
 				.find('[data-testid*="select-option:"]')
 				.each((option) => {
@@ -102,7 +102,7 @@ describe('Issue details editing', () => {
 		});
 	});
 
-  // Assignment 3: Task 2 (BONUS)
+    // Assignment 3: Task 2 (BONUS)
 	it('Check reporter name has only characters in it', () => {
 		const pattern = /^[A-Za-z\s]*$/;
 
@@ -114,6 +114,5 @@ describe('Issue details editing', () => {
 		});
 	});
 
-	const getIssueDetailsModal = () =>
-		cy.get('[data-testid="modal:issue-details"]');
+	const getIssueDetailsModal = () => cy.get('[data-testid="modal:issue-details"]');
 });
