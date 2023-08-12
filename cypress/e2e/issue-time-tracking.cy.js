@@ -23,7 +23,7 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 	});
 
 	it('Check "estimate" time can be added and visible', () => {
-		const hours = 10
+		const hours = 10;
 
 		cy.visit(baseUrl + '/board?modal-issue-create=true');
 		createIssue(issueTitle);
@@ -38,11 +38,10 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 
 		reOpenIssue('', issueTitle);
 		timeWidget().should('contain', `${hours}h estimated`);
-
 	});
 
 	it('Check "estimate" time can be edited and visible', () => {
-		const hours = 20
+		const hours = 20;
 
 		openIssue(issueNumber);
 		getIssueDetailsModal().within(() => {
@@ -111,14 +110,12 @@ describe('Time tracking "estimated time" and "remaining time" adding, editing an
 		timeWidget().should('not.contain', `h logged`);
 		timeWidget().should('not.contain', `h remaining`);
 	});
-
-
 });
 
 function reOpenIssue(number = null, title = '') {
-		cy.log('🔄 Reopening task')
-		closeIssue();
-		openIssue(number, title);
+	cy.log('🔄 Reopening task');
+	closeIssue();
+	openIssue(number, title);
 }
 
 function inputCheckEstimated(hours = null) {
@@ -148,9 +145,8 @@ function closeTimeModal() {
 }
 
 function createIssue(title) {
-
 	IssueModal.getIssueModal().should('be.visible');
-	
+
 	IssueModal.getIssueModal()
 		.within(() => {
 			// fix for title field being unfocused during form load.
@@ -163,7 +159,6 @@ function createIssue(title) {
 				.should('contain', 'Issue has been successfully created.')
 				.click();
 		});
-
 }
 
 function openIssue(number = null, title = '') {
